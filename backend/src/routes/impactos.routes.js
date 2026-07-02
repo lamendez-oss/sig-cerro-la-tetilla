@@ -1,8 +1,8 @@
-// CRUD de impactos ambientales con geometría PostGIS
+﻿// CRUD de impactos ambientales con geometría PostGIS
 import { Router } from 'express';
 import { pool } from '../config/db.js';
 import { verificarToken, permitirRoles } from '../middleware/auth.js';
-import { upload } from '../middleware/upload.js';
+import { upload, rutaArchivo } from '../middleware/upload.js';
 
 const router = Router();
 
@@ -78,7 +78,7 @@ router.post(
         await cliente.query(
           `INSERT INTO fotografias_impacto (impacto_id, ruta_archivo, nombre_original)
            VALUES ($1, $2, $3)`,
-          [impactoId, `/uploads/${foto.filename}`, foto.originalname]
+          [impactoId, rutaArchivo(foto), foto.originalname]
         );
       }
       await cliente.query(
