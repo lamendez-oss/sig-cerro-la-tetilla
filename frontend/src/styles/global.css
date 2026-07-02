@@ -1,0 +1,13 @@
+/* Estilos globales */
+html, body, #root { height: 100%; margin: 0; }
+.leaflet-container { width: 100%; height: 100%; font: inherit; }
+
+/* Botones táctiles más grandes en pantallas pequeñas */
+@media (max-width: 600px) {
+  .leaflet-touch .leaflet-bar a { width: 40px; height: 40px; line-height: 40px; }
+}
+
+/* Respeto por la preferencia de movimiento reducido */
+@media (prefers-reduced-motion: reduce) {
+  * { animation: none !important; transition: none !important; }
+}
