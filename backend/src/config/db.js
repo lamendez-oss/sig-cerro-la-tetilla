@@ -5,8 +5,13 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // Neon (y la mayoría de proveedores en la nube) exigen conexión cifrada.
-// PGSSLMODE=require en las variables de entorno activa SSL; en local se deja sin definir.
-const usaSSL = process.env.PGSSLMODE === 'require';
+// Se activa SSL automáticamente si PGSSLMODE=require O si el host no es local
+// (así funciona aunque la variable de entorno no llegue a definirse correctamente).
+const host = process.env.DB_HOST || '';
+const esLocal = host === 'localhost' || host === '127.0.0.1' || host === '';
+const usaSSL = process.env.PGSSLMODE === 'require' || !esLocal;
+
+console.log(`Conectando a la base de datos en "${host}" (SSL: ${usaSSL ? 'activado' : 'desactivado'})`);
 
 export const pool = new pg.Pool({
   host: process.env.DB_HOST,
