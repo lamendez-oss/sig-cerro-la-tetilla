@@ -1,18 +1,21 @@
-// Descarga de reportes: GeoJSON y CSV desde la API
+﻿// Descarga de reportes: GeoJSON y CSV desde la API
 import { Box, Container, Typography, Paper, Button } from '@mui/material';
 import Grid from '@mui/material/Grid2';
 import DownloadIcon from '@mui/icons-material/Download';
+
+// En desarrollo usa el proxy de Vite ("/api"); en producción usa la URL pública del backend
+const apiBase = import.meta.env.VITE_API_URL ?? '';
 
 const reportes = [
   {
     titulo: 'GeoJSON',
     descripcion: 'Todos los impactos con su geometría, listos para QGIS o ArcGIS Pro.',
-    url: '/api/reportes/geojson',
+    url: `${apiBase}/api/reportes/geojson`,
   },
   {
     titulo: 'CSV',
     descripcion: 'Tabla de atributos con áreas y longitudes calculadas, compatible con Excel.',
-    url: '/api/reportes/csv',
+    url: `${apiBase}/api/reportes/csv`,
   },
 ];
 
