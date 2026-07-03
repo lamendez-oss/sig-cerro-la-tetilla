@@ -121,9 +121,26 @@ export default function Layout() {
             </>
           )}
           {usuario ? (
-            <Button color="inherit" onClick={() => { cerrarSesion(); navegar('/'); }}>
-              Cerrar sesión ({usuario.nombre.split(' ')[0]})
-            </Button>
+            <>
+              {esAdministrador && !esMovil && (
+                <Button
+                  component={NavLink}
+                  to="/admin"
+                  startIcon={<AdminPanelSettingsIcon />}
+                  sx={{
+                    color: '#fff',
+                    bgcolor: 'secondary.main',
+                    '&:hover': { bgcolor: 'secondary.dark' },
+                    '&.active': { bgcolor: 'secondary.dark' },
+                  }}
+                >
+                  Administración
+                </Button>
+              )}
+              <Button color="inherit" onClick={() => { cerrarSesion(); navegar('/'); }}>
+                Cerrar sesión ({usuario.nombre.split(' ')[0]})
+              </Button>
+            </>
           ) : (
             <>
               {!esMovil && (
