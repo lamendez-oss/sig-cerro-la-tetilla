@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Outlet, NavLink, useNavigate } from 'react-router-dom';
 import {
   AppBar, Toolbar, Typography, IconButton, Drawer, List, ListItemButton,
-  ListItemIcon, ListItemText, Box, Button, useMediaQuery, Divider,
+  ListItemIcon, ListItemText, Box, Button, useMediaQuery, Divider, Menu, MenuItem,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import MenuIcon from '@mui/icons-material/Menu';
@@ -18,21 +18,30 @@ import DownloadIcon from '@mui/icons-material/Download';
 import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 import HomeIcon from '@mui/icons-material/Home';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useAuth } from '../../context/AuthContext';
 
-const enlaces = [
+// Enlaces que se muestran directamente como botones en la barra de PC
+const enlacesPrincipales = [
   { ruta: '/', texto: 'Inicio', icono: <HomeIcon /> },
   { ruta: '/mapa', texto: 'Mapa SIG', icono: <MapIcon /> },
   { ruta: '/registro-impactos', texto: 'Registrar impacto', icono: <AddLocationAltIcon /> },
   { ruta: '/comparacion', texto: 'Comparación', icono: <CompareIcon /> },
   { ruta: '/dashboard', texto: 'Dashboard', icono: <InsightsIcon /> },
+];
+
+// Enlaces adicionales: en PC quedan agrupados en el menú "Más", en móvil van sueltos
+const enlacesSecundarios = [
   { ruta: '/proyecto', texto: 'Proyecto', icono: <ScienceIcon /> },
   { ruta: '/articulo', texto: 'Artículo', icono: <ArticleIcon /> },
   { ruta: '/reportes', texto: 'Reportes', icono: <DownloadIcon /> },
 ];
 
+const enlaces = [...enlacesPrincipales, ...enlacesSecundarios];
+
 export default function Layout() {
   const [abierto, setAbierto] = useState(false);
+  const [anclaMas, setAnclaMas] = useState<null | HTMLElement>(null);
   const tema = useTheme();
   const esMovil = useMediaQuery(tema.breakpoints.down('md'));
   const { usuario, cerrarSesion, esAdministrador } = useAuth();
@@ -88,12 +97,29 @@ export default function Layout() {
           <Typography variant="h6" sx={{ flexGrow: 1, letterSpacing: 0.3 }}>
             SIG Cerro La Tetilla
           </Typography>
-          {!esMovil && enlaces.slice(0, 5).map((e) => (
+          {!esMovil && enlacesPrincipales.map((e) => (
             <Button key={e.ruta} color="inherit" component={NavLink} to={e.ruta}
               sx={{ '&.active': { borderBottom: '2px solid', borderRadius: 0 } }}>
               {e.texto}
             </Button>
           ))}
+          {!esMovil && (
+            <>
+              <Button color="inherit" endIcon={<ExpandMoreIcon />}
+                onClick={(ev) => setAnclaMas(ev.currentTarget)}>
+                Más
+              </Button>
+              <Menu anchorEl={anclaMas} open={Boolean(anclaMas)} onClose={() => setAnclaMas(null)}>
+                {enlacesSecundarios.map((e) => (
+                  <MenuItem key={e.ruta} component={NavLink} to={e.ruta}
+                    onClick={() => setAnclaMas(null)}>
+                    <ListItemIcon>{e.icono}</ListItemIcon>
+                    {e.texto}
+                  </MenuItem>
+                ))}
+              </Menu>
+            </>
+          )}
           {usuario ? (
             <Button color="inherit" onClick={() => { cerrarSesion(); navegar('/'); }}>
               Cerrar sesión ({usuario.nombre.split(' ')[0]})
